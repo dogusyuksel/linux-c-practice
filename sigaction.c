@@ -89,8 +89,77 @@ void posix_signal_handler(int sig, siginfo_t *siginfo, void *context)
 {
 	(void)context;
 	switch(sig) {
+		case SIGCHLD:
+			switch(siginfo->si_code)
+			{
+				case CLD_EXITED:
+					fputs("Caught SIGCHLD: (Child has exited)\n", stderr);
+					break;
+				case CLD_KILLED:
+					fputs("Caught SIGCHLD: (Child was killed)\n", stderr);
+					break;
+				case CLD_DUMPED:
+					fputs("Caught SIGCHLD: (Child terminated abnormally)\n", stderr);
+					break;
+				case CLD_TRAPPED:
+					fputs("Caught SIGCHLD: (Traced child has trapped)\n", stderr);
+					break;
+				case CLD_STOPPED:
+					fputs("Caught SIGCHLD: (Child has stopped)\n", stderr);
+					break;
+				case CLD_CONTINUED:
+					fputs("Caught SIGCHLD: (Stopped child has continued)\n", stderr);
+					break;
+				default:
+					fputs("Caught SIGCHLD: default\n", stderr);
+					break;
+			}
+			break;
+		case SIGTRAP:
+			fputs("Caught SIGTRAP\n", stderr);
+			break;
+		case SIGBUS:
+			switch(siginfo->si_code)
+			{
+				case BUS_ADRALN:
+					fputs("Caught SIGBUS: (Invalid address alignment)\n", stderr);
+					break;
+				case BUS_ADRERR:
+					fputs("Caught SIGBUS: (Nonexistent physical address)\n", stderr);
+					break;
+				case BUS_OBJERR:
+					fputs("Caught SIGBUS: (Object-specific hardware error)\n", stderr);
+					break;
+				case BUS_MCEERR_AR:
+					fputs("Caught SIGBUS: (Hardware memory error consumed on a machine check; action required)\n", stderr);
+					break;
+				case BUS_MCEERR_AO:
+					fputs("Caught SIGBUS: (Hardware memory error detected in process but not consumed; action optional)\n", stderr);
+					break;
+				default:
+					fputs("Caught SIGBUS: default\n", stderr);
+					break;
+			}
+			break;
 		case SIGSEGV:
-			fputs("Caught SIGSEGV: Segmentation Fault\n", stderr);
+			switch(siginfo->si_code)
+			{
+				case SEGV_MAPERR:
+					fputs("Caught SIGSEGV: (Address not mapped to object)\n", stderr);
+					break;
+				case SEGV_ACCERR:
+					fputs("Caught SIGSEGV: (Invalid permissions for mapped object)\n", stderr);
+					break;
+				case SEGV_BNDERR:
+					fputs("Caught SIGSEGV: (Failed address bound checks)\n", stderr);
+					break;
+				case SEGV_PKUERR:
+					fputs("Caught SIGSEGV: (Access was denied by memory protection keys)\n", stderr);
+					break;
+				default:
+					fputs("Caught SIGSEGV: Segmentation Fault\n", stderr);
+					break;
+			}
 			break;
 		case SIGINT:
 			fputs("Caught SIGINT: Interactive attention signal, (usually ctrl+c)\n", stderr);
